@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PhishNet — Dashboard</title><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span>🛡</span>
+    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/scanner">Scanner</a></li>
+    <li><a href="/performance">Performance</a></li>
+    <li><a href="/charts">Charts</a></li>
+    <li><a href="/faq">FAQ</a></li>
+    <li><a href="/logout" class="btn-nav-logout">Logout</a></li>
+  </ul>
+</nav>
+<div class="dash-wrap">
+<aside class="sidebar">
+  <p class="sidebar-label">MENU</p>
+  <nav>
+    <a href="/dashboard">🏠 Dashboard</a>
+    <a href="/scanner">🔍 URL Scanner</a>
+    <a href="/performance">📊 Performance</a>
+    <a href="/charts">📈 Charts</a>
+    <a href="/faq">❓ FAQ</a>
+    <a href="/logout" style="color:#FCA5A5;">🚪 Logout</a>
+  </nav>
+</aside>
+  <div class="dash-main">
+    <div class="page-hdr">
+      <h2>Dashboard</h2>
+      <p>Welcome back, Admin — PhishNet is ready</p>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-num">96.74%</div><div class="kpi-lbl">RF Accuracy</div></div>
+      <div class="kpi"><div class="kpi-num">98.5%</div><div class="kpi-lbl">ROC-AUC</div></div>
+      <div class="kpi"><div class="kpi-num">20</div><div class="kpi-lbl">Features</div></div>
+      <div class="kpi"><div class="kpi-num">52K+</div><div class="kpi-lbl">Training URLs</div></div>
+    </div>
+
+    <div class="card">
+      <h3>Quick Actions</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="/scanner"     class="btn btn-primary">&#128269; Scan a URL</a>
+        <a href="/performance" class="btn btn-navy">&#128202; Performance</a>
+        <a href="/charts"      class="btn btn-navy">&#128200; Charts</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>About PhishNet</h3>
+      <p style="color:var(--mg);font-size:.88rem;line-height:1.75;">
+        PhishNet is an ML-based system that classifies any URL as
+        <span style="color:var(--gr);font-weight:700;">Legitimate</span> or
+        <span style="color:var(--rd);font-weight:700;">Malicious/Phishing</span>
+        using 20 URL-structural features and a trained Random Forest model.
+        The model achieves <strong>96.74% accuracy</strong> on the test set with
+        an ROC-AUC of <strong>98.5%</strong>.
+      </p>
+      <div style="margin-top:14px;background:var(--vblue);padding:11px 14px;
+                  border-radius:8px;font-size:.83rem;color:var(--blue);">
+        <strong>Base Paper:</strong> Kasar et al. (2025) — Phishing URL Detection using ML.
+        IEEE ICAMIDA. DOI: 10.1109/ICAMIDA64673.2025.11208974
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
+  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
+  Study World College of Engineering, Coimbatore
+</footer>
+</body></html>

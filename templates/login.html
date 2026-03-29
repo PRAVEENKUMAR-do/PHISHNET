@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PhishNet — Login</title><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span>🛡</span>
+    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/faq">FAQ</a></li>
+    <li><a href="/login" class="btn-nav-login">Login</a></li>
+  </ul>
+</nav>
+<div class="login-wrap">
+  <div class="login-box">
+    <span class="login-logo">&#128737;</span>
+    <h2>Welcome Back</h2>
+    <p class="login-sub">Sign in to the PhishNet dashboard</p>
+    <div class="login-hint">Default login&nbsp;&nbsp;<strong>admin</strong> / <strong>admin</strong></div>
+    {% if error %}
+    <div class="err-alert">{{ error }}</div>
+    {% endif %}
+    <form method="POST">
+      <div class="form-grp">
+        <label>Username</label>
+        <input name="username" class="form-ctrl" placeholder="admin" required autofocus>
+      </div>
+      <div class="form-grp">
+        <label>Password</label>
+        <input name="password" type="password" class="form-ctrl" placeholder="admin" required>
+      </div>
+      <button class="btn btn-primary btn-block">Login to Dashboard &rarr;</button>
+    </form>
+  </div>
+</div>
+<footer class="footer">
+  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
+  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
+  Study World College of Engineering, Coimbatore
+</footer>
+</body></html>

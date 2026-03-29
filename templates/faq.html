@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PhishNet — FAQ</title><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span>🛡</span>
+    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/faq">FAQ</a></li>
+    <li><a href="/login" class="btn-nav-login">Login</a></li>
+  </ul>
+</nav>
+<div class="faq-wrap">
+  <div class="page-hdr">
+    <h2>Frequently Asked Questions</h2>
+    <p>Everything about PhishNet</p>
+  </div>
+  <div class="faq-item">
+    <h4>What is PhishNet and what does it do?</h4>
+    <p>PhishNet is an ML-based malicious URL detection system that classifies any website link
+       as Legitimate or Phishing/Malicious using 20 URL structural features and a trained
+       Random Forest model achieving 96.74% accuracy.</p>
+  </div>
+  <div class="faq-item">
+    <h4>What technologies are used?</h4>
+    <p>Python for ML and backend, Flask as the web framework, scikit-learn for model training,
+       Pandas and NumPy for data processing, and HTML/CSS for the frontend interface.</p>
+  </div>
+  <div class="faq-item">
+    <h4>What features does PhishNet extract from a URL?</h4>
+    <p>PhishNet extracts 20 structural features including URL length, number of dots and hyphens,
+       presence of IP address, HTTPS usage, URL entropy (randomness), subdomain count, digit ratio,
+       suspicious keywords like login/verify/bank, and more. No live network lookups are needed.</p>
+  </div>
+  <div class="faq-item">
+    <h4>Why is there a "Proceed with Caution" option for unsafe URLs?</h4>
+    <p>No ML model is 100% accurate — there is a small chance of False Positives where a
+       legitimate URL is wrongly flagged. The Proceed with Caution option lets experienced users
+       visit the URL after acknowledging the risk, while still clearly warning others.</p>
+  </div>
+  <div class="faq-item">
+    <h4>What dataset was used to train PhishNet?</h4>
+    <p>PhishNet was trained on the Malicious URLs dataset containing 52,000+ labelled URLs
+       across four categories: benign, phishing, malware, and defacement. SMOTE oversampling
+       was applied to balance the classes before training.</p>
+  </div>
+  <div class="faq-item">
+    <h4>What is the base paper?</h4>
+    <p>Kasar, A. et al. (2025). Phishing URL Detection using Machine Learning Algorithms.
+       IEEE ICAMIDA Conference. DOI: 10.1109/ICAMIDA64673.2025.11208974</p>
+  </div>
+</div>
+<footer class="footer">
+  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
+  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
+  Study World College of Engineering, Coimbatore
+</footer>
+</body></html>

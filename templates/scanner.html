@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>PhishNet — URL Scanner</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <a href="/" class="nav-brand">
+        <span>🛡</span>
+        <div>
+          <strong>PhishNet</strong><small>Malicious URL Detection</small>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/scanner">Scanner</a></li>
+        <li><a href="/performance">Performance</a></li>
+        <li><a href="/charts">Charts</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/logout" class="btn-nav-logout">Logout</a></li>
+      </ul>
+    </nav>
+    <div class="dash-wrap">
+      <aside class="sidebar">
+        <p class="sidebar-label">MENU</p>
+        <nav>
+          <a href="/dashboard">🏠 Dashboard</a>
+          <a href="/scanner">🔍 URL Scanner</a>
+          <a href="/performance">📊 Performance</a>
+          <a href="/charts">📈 Charts</a>
+          <a href="/faq">❓ FAQ</a>
+          <a href="/logout" style="color: #fca5a5">🚪 Logout</a>
+        </nav>
+      </aside>
+      <div class="dash-main">
+        <div class="page-hdr">
+          <h2>&#128269; URL Scanner</h2>
+          <p>Enter any URL to detect if it is legitimate or malicious</p>
+        </div>
+
+        <div class="card">
+          <h3>Analyse a URL</h3>
+          <form method="POST" class="scanner-form">
+            <div>
+              <label
+                style="
+                  font-size: 0.85rem;
+                  font-weight: 600;
+                  color: var(--dg);
+                  display: block;
+                  margin-bottom: 5px;
+                "
+              >
+                Select Model
+              </label>
+              <select name="model" class="model-sel">
+                <option value="Random Forest">
+                  &#129302; Random Forest (96.74%)
+                </option>
+                <option value="Gradient Boosting">
+                  &#128640; Gradient Boosting (97.4%)
+                </option>
+              </select>
+            </div>
+            <div>
+              <label
+                style="
+                  font-size: 0.85rem;
+                  font-weight: 600;
+                  color: var(--dg);
+                  display: block;
+                  margin-bottom: 5px;
+                "
+              >
+                Enter URL
+              </label>
+              <div class="input-row">
+                <input
+                  type="text"
+                  name="url"
+                  class="url-input"
+                  placeholder="https://example.com  or paste any suspicious link"
+                  value="{% if result and result.url %}{{ result.url }}{% endif %}"
+                  required
+                  autofocus
+                />
+                <button type="submit" class="btn btn-primary">
+                  Analyse URL
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {% if result %} {% if result.error %}
+        <div class="result-wrap result-warn">
+          <div class="result-head">
+            <span class="result-icon">&#9888;&#65039;</span>
+            <div class="result-title">Analysis Error</div>
+          </div>
+          <div class="result-url">{{ result.url }}</div>
+          <p style="color: var(--yl); font-size: 0.88rem; margin-bottom: 14px">
+            {{ result.error }}
+          </p>
+          <div class="advice" style="background: var(--lyl); color: var(--yl)">
+            This may be an invalid URL or a network issue. Please check the URL
+            and try again.
+          </div>
+        </div>
+
+        {% elif result.is_malicious %}
+        <div class="result-wrap result-unsafe">
+          <div class="result-head">
+            <span class="result-icon">&#128680;</span>
+            <div class="result-title">UNSAFE &mdash; Phishing / Malicious</div>
+          </div>
+          <div class="result-url">{{ result.url }}</div>
+          <div class="conf-bar-bg">
+            <div class="conf-bar" style="width:{{ result.mal_prob }}%"></div>
+          </div>
+          <div class="result-meta">
+            <span>&#129302; {{ result.model }}</span>
+            <span
+              >&#128200; Malicious Probability:
+              <strong>{{ result.mal_prob }}%</strong></span
+            >
+            <span
+              >&#128293; Confidence:
+              <strong>{{ result.confidence }}%</strong></span
+            >
+            <span>&#128336; {{ result.time }}</span>
+          </div>
+          <p><strong>Threat Level:</strong> {{ result.threat }}</p>
+
+          <ul style="margin-top: 10px">
+            {% for r in result.reasons %}
+            <li>⚠️ {{ r }}</li>
+            {% endfor %}
+          </ul>
+          <div class="advice adv-unsafe">
+            &#9888;&#65039; This URL shows strong indicators of phishing or
+            malicious activity. Do NOT visit this website or enter any personal
+            information.
+          </div>
+          <div class="result-btns" style="margin-top: 14px">
+            <a href="/scanner" class="btn btn-navy btn-sm"
+              >&#8592; Scan Another</a
+            >
+            <a
+              href="{{ result.url }}"
+              target="_blank"
+              onclick="
+                return confirm(
+                  'WARNING: This URL is MALICIOUS. Proceed anyway?',
+                );
+              "
+              class="btn btn-red btn-sm"
+              >Proceed with Caution</a
+            >
+          </div>
+        </div>
+
+        {% else %}
+        <div class="result-wrap result-safe">
+          <div class="result-head">
+            <span class="result-icon">&#9989;</span>
+            <div class="result-title">SAFE &mdash; Legitimate URL</div>
+          </div>
+          <div class="result-url">{{ result.url }}</div>
+          <div class="conf-bar-bg">
+            <div class="conf-bar" style="width:{{ result.confidence }}%"></div>
+          </div>
+          <div class="result-meta">
+            <span>&#129302; {{ result.model }}</span>
+            <span
+              >&#128200; Malicious Probability:
+              <strong>{{ result.mal_prob }}%</strong></span
+            >
+            <span
+              >&#9989; Confidence:
+              <strong>{{ result.confidence }}%</strong></span
+            >
+            <span>&#128336; {{ result.time }}</span>
+          </div>
+          {% if result.is_suspicious %}
+          <div
+            style="
+              margin-top: 10px;
+              padding: 10px;
+              background: #fff3cd;
+              color: #856404;
+              border-radius: 6px;
+            "
+          >
+            ⚠️ Warning: This is a shortened URL. The actual destination is
+            hidden.
+          </div>
+          {% endif %}
+          <div class="advice adv-safe">
+            &#9989; This URL appears to be safe and legitimate based on our ML
+            analysis.
+          </div>
+          <div class="result-btns" style="margin-top: 14px">
+            <a href="/scanner" class="btn btn-navy btn-sm"
+              >&#8592; Scan Another</a
+            >
+            <a
+              href="{{ result.url }}"
+              target="_blank"
+              class="btn btn-green btn-sm"
+            >
+              Continue to Website &rarr;
+            </a>
+          </div>
+        </div>
+        {% endif %} {% endif %}
+
+        <div class="card" style="margin-top: 16px">
+          <h3>How the Scanner Works</h3>
+          <ol
+            style="
+              color: var(--mg);
+              font-size: 0.86rem;
+              line-height: 2.1;
+              padding-left: 18px;
+            "
+          >
+            <li>You paste any URL into the input box</li>
+            <li>
+              PhishNet extracts <strong>20 structural features</strong> from the
+              URL instantly
+            </li>
+            <li>The trained ML model classifies it in under 1 second</li>
+            <li>
+              You receive a
+              <span style="color: var(--gr); font-weight: 700">SAFE</span> or
+              <span style="color: var(--rd); font-weight: 700">UNSAFE</span>
+              verdict with confidence
+            </li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      PhishNet &mdash; ML-Based Malicious URL Detection &mdash; CS3811 Project
+      Work &mdash; IV Year B.E. CSE &mdash; Study World College of Engineering,
+      Coimbatore
+    </footer>
+  </body>
+</html>

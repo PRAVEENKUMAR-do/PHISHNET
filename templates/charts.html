@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PhishNet — Charts</title><link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar">
+  <a href="/" class="nav-brand">
+    <span>🛡</span>
+    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="/dashboard">Dashboard</a></li>
+    <li><a href="/scanner">Scanner</a></li>
+    <li><a href="/performance">Performance</a></li>
+    <li><a href="/charts">Charts</a></li>
+    <li><a href="/faq">FAQ</a></li>
+    <li><a href="/logout" class="btn-nav-logout">Logout</a></li>
+  </ul>
+</nav>
+<div class="dash-wrap">
+<aside class="sidebar">
+  <p class="sidebar-label">MENU</p>
+  <nav>
+    <a href="/dashboard">🏠 Dashboard</a>
+    <a href="/scanner">🔍 URL Scanner</a>
+    <a href="/performance">📊 Performance</a>
+    <a href="/charts">📈 Charts</a>
+    <a href="/faq">❓ FAQ</a>
+    <a href="/logout" style="color:#FCA5A5;">🚪 Logout</a>
+  </nav>
+</aside>
+  <div class="dash-main">
+    <div class="page-hdr">
+      <h2>&#128200; Charts &amp; Visualisations</h2>
+      <p>Graphical analysis of model performance and dataset</p>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-box">
+        <h3>Accuracy Comparison — All Models</h3>
+        <img src="/static/charts/accuracy.png" alt="Accuracy"
+             onerror="this.outerHTML='<p class=no-chart>Run python train.py to generate</p>'">
+      </div>
+      <div class="chart-box">
+        <h3>All Metrics Comparison</h3>
+        <img src="/static/charts/all_metrics.png" alt="All Metrics"
+             onerror="this.outerHTML='<p class=no-chart>Run python train.py to generate</p>'">
+      </div>
+      <div class="chart-box">
+        <h3>Dataset Distribution</h3>
+        <img src="/static/charts/dataset_pie.png" alt="Dataset Pie"
+             onerror="this.outerHTML='<p class=no-chart>Run python train.py to generate</p>'">
+      </div>
+      <div class="chart-box">
+        <h3>Feature Importance — Random Forest</h3>
+        <img src="/static/charts/feature_importance.png" alt="Feature Importance"
+             onerror="this.outerHTML='<p class=no-chart>Run python train.py to generate</p>'">
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
+  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
+  Study World College of Engineering, Coimbatore
+</footer>
+</body></html>
