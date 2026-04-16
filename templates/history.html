@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}PhishNet{% endblock %}
+
+{% block content %}
+<div class="history-page fade-in">
+    <div class="page-hdr">
+        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">PhishNet <span class="text-gradient">History</span></h1>
+        <p style="color: var(--mg);">Archived security audit logs and detection telemetry</p>
+    </div>
+
+    <!-- Controls Header -->
+    <div class="history-controls-wrapper">
+        <div class="history-controls">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn btn-malicious" data-filter="malicious">Malicious</button>
+                <button class="filter-btn btn-suspicious" data-filter="suspicious">Suspicious</button>
+                <button class="filter-btn btn-safe" data-filter="safe">Safe</button>
+            </div>
+            <div class="search-group">
+                <input type="text" id="historySearch" placeholder="Search URLs..." class="history-search">
+            </div>
+        </div>
+        <div class="row-count" id="rowCountInfo">Showing {{ history|length }} of {{ history|length }} results</div>
+    </div>
+
+    <div class="premium-card" style="border-top-left-radius:0; border-top-right-radius:0;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid var(--border);">
+                    <th style="padding: 15px; color: var(--mg); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Timestamp</th>
+                    <th style="padding: 15px; color: var(--mg); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Target URL</th>
+                    <th style="padding: 15px; color: var(--mg); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Engine</th>
+                    <th style="padding: 15px; color: var(--mg); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Result</th>
+                    <th style="padding: 15px; color: var(--mg); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">Score</th>
+                    <th style="padding: 15px; color: var(--mg); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody">
+                {% for item in history %}
+                {% set status_val = 'malicious' if item.severity|upper in ['HIGH', 'CRITICAL'] else ('safe' if item.severity|upper == 'SAFE' else 'suspicious') %}
+                <tr class="history-row" data-status="{{ status_val }}" style="border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding: 18px 15px; font-size: 0.8rem; color: var(--mg);">{{ item.timestamp }}</td>
+                    <td class="url-cell" style="padding: 18px 15px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; max-width: 400px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #fff;">
+                        {{ item.url }}
+                    </td>
+                    <td style="padding: 18px 15px; font-size: 0.85rem;">{{ item.model }}</td>
+                    <td style="padding: 18px 15px;">
+                        <span class="status-badge badge-{{ status_val }}">
+                            {{ item.severity|upper }}
+                        </span>
+                    </td>
+                    <td style="padding: 18px 15px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">{{ item.risk_score }}</td>
+                    <td style="padding: 18px 15px; text-align: right;">
+                        <a href="/report/{{ item.scan_id }}" target="_blank" style="color: var(--primary); font-size: 0.8rem; text-decoration: none; font-weight: 600;">Report</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr id="emptyStateRow">
+                    <td colspan="6" style="padding: 4rem; text-align: center; color: var(--mg);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                        <p>No security scans recorded in current session.</p>
+                        <a href="/scanner" class="btn btn-primary" style="margin-top: 1.5rem;">Start First Scan</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('historySearch');
+    const rows = document.querySelectorAll('.history-row');
+    const rowCountInfo = document.getElementById('rowCountInfo');
+    
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    function applyFilters() {
+        let visibleCount = 0;
+        
+        rows.forEach(row => {
+            const status = row.getAttribute('data-status');
+            const urlText = row.querySelector('.url-cell').textContent.toLowerCase();
+            
+            const matchesFilter = (currentFilter === 'all') || (status === currentFilter);
+            const matchesSearch = urlText.includes(searchQuery);
+            
+            if (matchesFilter && matchesSearch) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+        
+        rowCountInfo.textContent = `Showing ${visibleCount} of ${rows.length} results`;
+    }
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            const target = e.target;
+            target.classList.add('active');
+            
+            currentFilter = target.getAttribute('data-filter');
+            applyFilters();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQuery = e.target.value.toLowerCase();
+            applyFilters();
+        });
+    }
+});
+</script>
+{% endblock %}

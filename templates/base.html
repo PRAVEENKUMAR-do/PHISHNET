@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>{% block title %}PhishNet{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <div class="layout-container">
+      <!-- Sidebar Navigation -->
+      <aside class="sidebar">
+        <a href="/" class="sidebar-logo">
+          <div class="icon">🛡️</div>
+          <h1>PhishNet</h1>
+        </a>
+
+        <nav class="sidebar-nav">
+          <p
+            class="sidebar-label"
+            style="
+              font-size: 0.65rem;
+              color: var(--mg);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin: 1.5rem 0 0.5rem 1rem;
+            "
+          >
+            Main Menu
+          </p>
+          <a
+            href="/dashboard"
+            class="nav-link {% if request.path == '/dashboard' %}active{% endif %}"
+          >
+            <span>📊</span> Dashboard
+          </a>
+          <a
+            href="/scanner"
+            class="nav-link {% if request.path == '/scanner' %}active{% endif %}"
+          >
+            <span>🔍</span> URL Scanner
+          </a>
+          <a
+            href="/bulk-scan"
+            class="nav-link {% if request.path == '/bulk-scan' %}active{% endif %}"
+          >
+            <span>🗂️</span> Bulk Scanner
+          </a>
+          <a
+            href="/history"
+            class="nav-link {% if request.path == '/history' %}active{% endif %}"
+          >
+            <span>📜</span> Scan History
+          </a>
+          <a
+            href="/performance"
+            class="nav-link {% if request.path == '/performance' %}active{% endif %}"
+          >
+            <span>📈</span> Performance
+          </a>
+
+          <p
+            class="sidebar-label"
+            style="
+              font-size: 0.65rem;
+              color: var(--mg);
+              text-transform: uppercase;
+              letter-spacing: 1px;
+              margin: 2rem 0 0.5rem 1rem;
+            "
+          >
+            System
+          </p>
+          <a
+            href="/faq"
+            class="nav-link {% if request.path == '/faq' %}active{% endif %}"
+          >
+            <span>🛡️</span> Security FAQ
+          </a>
+          <a
+            href="/reports"
+            class="nav-link {% if request.path == '/reports' %}active{% endif %}"
+          >
+            <span>🚨</span> Phishing Reports
+          </a>
+        </nav>
+
+        <div style="padding: 2rem; border-top: 1px solid var(--border)">
+          <div class="status-active">
+            <div class="dot"></div>
+            System Active
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="main-content">
+        <header class="navbar">
+          <div class="nav-left" style="display: flex; align-items: center; gap: 20px;">
+            <div class="breadcrumb">
+              <a href="/">Platform</a>
+              <span>/</span>
+              <a href="{{ request.path }}" style="color: var(--text);">{% if request.path == '/scanner' %}URL Scanner{% elif request.path == '/dashboard' %}Dashboard{% elif request.path == '/bulk-scan' %}Bulk Scanner{% elif request.path == '/history' %}Scan History{% elif request.path == '/faq' %}Security FAQ{% elif request.path == '/reports' %}Phishing Reports{% else %}Home{% endif %}</a>
+            </div>
+            <div class="system-status">
+              <div class="pulse-dot"></div>
+              <span>SYSTEM ACTIVE</span>
+            </div>
+          </div>
+          <div
+            class="user-meta"
+            style="display: flex; align-items: center; gap: 15px"
+          >
+            <div style="text-align: right">
+              <p style="font-size: 0.85rem; font-weight: 700">Analyst View</p>
+              <p style="font-size: 0.7rem; color: var(--mg)">PhishNet Core</p>
+            </div>
+            <div
+              style="
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: var(--border-bright);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+              "
+            >
+              👨‍💻
+            </div>
+          </div>
+        </header>
+
+        <main class="content-body" style="padding-bottom: 2.5rem;">{% block content %}{% endblock %}</main>
+
+      </div>
+    </div>
+
+    <script>
+      // ── BUTTON RIPPLE EFFECT ──
+      document.addEventListener("click", function (e) {
+        const btn = e.target.closest(".btn, .action-btn");
+        if (btn) {
+          const rect = btn.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          
+          let ripple = document.createElement("span");
+          ripple.classList.add("ripple");
+          ripple.style.left = x + "px";
+          ripple.style.top = y + "px";
+          // Ensure ripple scales to cover the button
+          const size = Math.max(rect.width, rect.height);
+          ripple.style.width = ripple.style.height = size + "px";
+          // Center the ripple spawn point
+          ripple.style.transform = "translate(-50%, -50%) scale(0)";
+          
+          btn.appendChild(ripple);
+          setTimeout(() => ripple.remove(), 600);
+        }
+      });
+
+      // ── SCROLL FADE-IN ANIMATIONS ──
+      document.addEventListener("DOMContentLoaded", () => {
+        const fadeElements = document.querySelectorAll('.card, .premium-card, .results-container > div, .fade-in, .details-grid > div');
+        
+        // Add default fade class if not present
+        fadeElements.forEach(el => {
+            if(!el.classList.contains('fade-in')) {
+                el.classList.add('fade-in');
+            }
+        });
+
+        const observerOptions = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.1
+        };
+
+        let delayCounter = 0;
+        let lastTriggerTime = Date.now();
+
+        const observer = new IntersectionObserver((entries, observer) => {
+          const now = Date.now();
+          if (now - lastTriggerTime > 100) {
+              delayCounter = 0; // Reset stagger for distinct scroll events
+          }
+          lastTriggerTime = now;
+
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const el = entry.target;
+              
+              // Apply staggered delay for cards appearing simultaneously
+              el.style.transitionDelay = `${delayCounter * 0.1}s`;
+              delayCounter++;
+              
+              // Add visible class
+              el.classList.add('fade-in-visible');
+              
+              observer.unobserve(el);
+            }
+          });
+        }, observerOptions);
+
+        fadeElements.forEach(el => observer.observe(el));
+      });
+    </script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

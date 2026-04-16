@@ -1,0 +1,4 @@
+{"report_id": "PHISH-6477", "url": "http://free-login-verify.xyz", "risk": 92, "timestamp": "2026-04-15 12:50:38", "status": "Reported (Simulated)"}
+{"report_id": "PHISH-9835", "url": "http://paypal.com.fake-site.ru", "risk": 79, "timestamp": "2026-04-15 12:54:06", "status": "Reported (Simulated)"}
+{"report_id": "PHISH-4609", "url": "http://paypal.com.fake-site.ru", "risk": 79, "timestamp": "2026-04-15 12:57:19", "status": "Reported (Simulated)"}
+{"report_id": "PHISH-7632", "url": "https://paypal.com.fake-site.ru", "risk": 76, "timestamp": "2026-04-16 12:13:23", "status": "Reported (Simulated)"}

@@ -1,253 +1,357 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title>PhishNet — URL Scanner</title>
-    <link rel="stylesheet" href="/static/css/style.css" />
-  </head>
-  <body>
-    <nav class="navbar">
-      <a href="/" class="nav-brand">
-        <span>🛡</span>
-        <div>
-          <strong>PhishNet</strong><small>Malicious URL Detection</small>
-        </div>
-      </a>
-      <ul class="nav-links">
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/scanner">Scanner</a></li>
-        <li><a href="/performance">Performance</a></li>
-        <li><a href="/charts">Charts</a></li>
-        <li><a href="/faq">FAQ</a></li>
-        <li><a href="/logout" class="btn-nav-logout">Logout</a></li>
-      </ul>
-    </nav>
-    <div class="dash-wrap">
-      <aside class="sidebar">
-        <p class="sidebar-label">MENU</p>
-        <nav>
-          <a href="/dashboard">🏠 Dashboard</a>
-          <a href="/scanner">🔍 URL Scanner</a>
-          <a href="/performance">📊 Performance</a>
-          <a href="/charts">📈 Charts</a>
-          <a href="/faq">❓ FAQ</a>
-          <a href="/logout" style="color: #fca5a5">🚪 Logout</a>
-        </nav>
-      </aside>
-      <div class="dash-main">
-        <div class="page-hdr">
-          <h2>&#128269; URL Scanner</h2>
-          <p>Enter any URL to detect if it is legitimate or malicious</p>
-        </div>
+{% extends "base.html" %}
+{% block title %}PhishNet – URL Scanner{% endblock %}
 
-        <div class="card">
-          <h3>Analyse a URL</h3>
-          <form method="POST" class="scanner-form">
-            <div>
-              <label
-                style="
-                  font-size: 0.85rem;
-                  font-weight: 600;
-                  color: var(--dg);
-                  display: block;
-                  margin-bottom: 5px;
-                "
-              >
-                Select Model
-              </label>
-              <select name="model" class="model-sel">
-                <option value="Random Forest">
-                  &#129302; Random Forest (96.74%)
-                </option>
-                <option value="Gradient Boosting">
-                  &#128640; Gradient Boosting (97.4%)
-                </option>
-              </select>
-            </div>
-            <div>
-              <label
-                style="
-                  font-size: 0.85rem;
-                  font-weight: 600;
-                  color: var(--dg);
-                  display: block;
-                  margin-bottom: 5px;
-                "
-              >
-                Enter URL
-              </label>
-              <div class="input-row">
-                <input
-                  type="text"
-                  name="url"
-                  class="url-input"
-                  placeholder="https://example.com  or paste any suspicious link"
-                  value="{% if result and result.url %}{{ result.url }}{% endif %}"
-                  required
-                  autofocus
-                />
-                <button type="submit" class="btn btn-primary">
-                  Analyse URL
+{% block content %}
+<div class="scanner-page fade-in">
+    <div class="hero-text">
+        <h1 style="font-size:3rem;margin-bottom:0.5rem;">
+            URL <span class="text-gradient">Threat Analysis</span>
+        </h1>
+        <p style="color:var(--mg);">Enterprise-grade intelligence for real-time phishing detection</p>
+    </div>
+
+    <!-- ── INPUT CARD ──────────────────────────────────── -->
+    <div class="premium-card scanner-box">
+        <form action="/scanner" method="POST" id="scanForm">
+            <div class="cyber-input-group">
+                <div style="flex:1;position:relative;display:flex;flex-direction:column;">
+                    <input type="text" name="url" id="urlInput" required
+                           placeholder="Enter target URL (e.g. free-login.xyz)…"
+                           style="width:100%;">
+                    <div id="urlFeedback"
+                         style="position:absolute;top:110%;left:10px;font-size:0.75rem;
+                                color:var(--medium);font-weight:bold;white-space:nowrap;"></div>
+                </div>
+                <select name="model" class="cyber-select">
+                    <option value="rf">Random Forest (primary)</option>
+                    <option value="gb">Gradient Boosting</option>
+                    <option value="dt">Decision Tree</option>
+                    <option value="lr">Logistic Regression</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-scan" id="scanBtn">
+                    <span class="btn-text">Deep Scan</span>
+                    <div class="loader" id="scanLoader"></div>
                 </button>
-              </div>
             </div>
-          </form>
-        </div>
+        </form>
+    </div>
 
-        {% if result %} {% if result.error %}
-        <div class="result-wrap result-warn">
-          <div class="result-head">
-            <span class="result-icon">&#9888;&#65039;</span>
-            <div class="result-title">Analysis Error</div>
-          </div>
-          <div class="result-url">{{ result.url }}</div>
-          <p style="color: var(--yl); font-size: 0.88rem; margin-bottom: 14px">
-            {{ result.error }}
-          </p>
-          <div class="advice" style="background: var(--lyl); color: var(--yl)">
-            This may be an invalid URL or a network issue. Please check the URL
-            and try again.
-          </div>
-        </div>
 
-        {% elif result.is_malicious %}
-        <div class="result-wrap result-unsafe">
-          <div class="result-head">
-            <span class="result-icon">&#128680;</span>
-            <div class="result-title">UNSAFE &mdash; Phishing / Malicious</div>
-          </div>
-          <div class="result-url">{{ result.url }}</div>
-          <div class="conf-bar-bg">
-            <div class="conf-bar" style="width:{{ result.mal_prob }}%"></div>
-          </div>
-          <div class="result-meta">
-            <span>&#129302; {{ result.model }}</span>
-            <span
-              >&#128200; Malicious Probability:
-              <strong>{{ result.mal_prob }}%</strong></span
-            >
-            <span
-              >&#128293; Confidence:
-              <strong>{{ result.confidence }}%</strong></span
-            >
-            <span>&#128336; {{ result.time }}</span>
-          </div>
-          <p><strong>Threat Level:</strong> {{ result.threat }}</p>
-
-          <ul style="margin-top: 10px">
-            {% for r in result.reasons %}
-            <li>⚠️ {{ r }}</li>
-            {% endfor %}
-          </ul>
-          <div class="advice adv-unsafe">
-            &#9888;&#65039; This URL shows strong indicators of phishing or
-            malicious activity. Do NOT visit this website or enter any personal
-            information.
-          </div>
-          <div class="result-btns" style="margin-top: 14px">
-            <a href="/scanner" class="btn btn-navy btn-sm"
-              >&#8592; Scan Another</a
-            >
-            <a
-              href="{{ result.url }}"
-              target="_blank"
-              onclick="
-                return confirm(
-                  'WARNING: This URL is MALICIOUS. Proceed anyway?',
-                );
-              "
-              class="btn btn-red btn-sm"
-              >Proceed with Caution</a
-            >
-          </div>
+    {% if result %}
+        {% if result.error %}
+        <!-- Error card -->
+        <div class="premium-card" style="margin-top:2rem;border-color:var(--danger);
+                                          background:rgba(239,68,68,0.05);">
+            <h3 style="color:var(--danger);margin-bottom:0.5rem;">⚠ Scan Error</h3>
+            <p style="color:var(--mg);">{{ result.error }}</p>
         </div>
 
         {% else %}
-        <div class="result-wrap result-safe">
-          <div class="result-head">
-            <span class="result-icon">&#9989;</span>
-            <div class="result-title">SAFE &mdash; Legitimate URL</div>
-          </div>
-          <div class="result-url">{{ result.url }}</div>
-          <div class="conf-bar-bg">
-            <div class="conf-bar" style="width:{{ result.confidence }}%"></div>
-          </div>
-          <div class="result-meta">
-            <span>&#129302; {{ result.model }}</span>
-            <span
-              >&#128200; Malicious Probability:
-              <strong>{{ result.mal_prob }}%</strong></span
-            >
-            <span
-              >&#9989; Confidence:
-              <strong>{{ result.confidence }}%</strong></span
-            >
-            <span>&#128336; {{ result.time }}</span>
-          </div>
-          {% if result.is_suspicious %}
-          <div
-            style="
-              margin-top: 10px;
-              padding: 10px;
-              background: #fff3cd;
-              color: #856404;
-              border-radius: 6px;
-            "
-          >
-            ⚠️ Warning: This is a shortened URL. The actual destination is
-            hidden.
-          </div>
-          {% endif %}
-          <div class="advice adv-safe">
-            &#9989; This URL appears to be safe and legitimate based on our ML
-            analysis.
-          </div>
-          <div class="result-btns" style="margin-top: 14px">
-            <a href="/scanner" class="btn btn-navy btn-sm"
-              >&#8592; Scan Another</a
-            >
-            <a
-              href="{{ result.url }}"
-              target="_blank"
-              class="btn btn-green btn-sm"
-            >
-              Continue to Website &rarr;
-            </a>
-          </div>
-        </div>
-        {% endif %} {% endif %}
+        <!-- ── RESULTS SECTION ─────────────────────────── -->
+        <div class="results-container" style="margin-top:3.5rem; margin-bottom:3.5rem;">
+            
+            <!-- 1. VERDICT HERO -->
+            {% set risk = result.risk_score|default(0) %}
+            {% set conf = result.confidence|default(0) %}
+            {% if risk > 70 %}
+                {% set v_class = "verdict-hero-malicious" %}
+                {% set v_text = "THREAT DETECTED" %}
+                {% set v_label = "MALICIOUS" %}
+                {% set v_icon = "✖" %}
+                {% set v_sub = "High-risk phishing signature identified and confirmed." %}
+                {% set v_color = "var(--danger)" %}
+                {% set v_tag = "status-tag-danger" %}
+            {% elif risk > 30 %}
+                {% set v_class = "verdict-hero-suspicious" %}
+                {% set v_text = "REQUIRES REVIEW" %}
+                {% set v_label = "SUSPICIOUS" %}
+                {% set v_icon = "⚠" %}
+                {% set v_sub = "Anomalous patterns detected. Manual verification recommended." %}
+                {% set v_color = "var(--warning)" %}
+                {% set v_tag = "status-tag-warning" %}
+            {% else %}
+                {% set v_class = "verdict-hero-safe" %}
+                {% set v_text = "VERIFIED CLEAN" %}
+                {% set v_label = "SAFE" %}
+                {% set v_icon = "✔" %}
+                {% set v_sub = "No malicious signatures or architectural threats detected." %}
+                {% set v_color = "var(--success)" %}
+                {% set v_tag = "status-tag-safe" %}
+            {% endif %}
 
-        <div class="card" style="margin-top: 16px">
-          <h3>How the Scanner Works</h3>
-          <ol
-            style="
-              color: var(--mg);
-              font-size: 0.86rem;
-              line-height: 2.1;
-              padding-left: 18px;
-            "
-          >
-            <li>You paste any URL into the input box</li>
-            <li>
-              PhishNet extracts <strong>20 structural features</strong> from the
-              URL instantly
-            </li>
-            <li>The trained ML model classifies it in under 1 second</li>
-            <li>
-              You receive a
-              <span style="color: var(--gr); font-weight: 700">SAFE</span> or
-              <span style="color: var(--rd); font-weight: 700">UNSAFE</span>
-              verdict with confidence
-            </li>
-          </ol>
+            <div class="verdict-hero {{ v_class }} fade-in">
+                <div class="verdict-hero-bg"></div>
+                <div class="verdict-main">
+                    <div class="verdict-icon" style="color: {{ v_color }}; text-shadow: 0 0 20px {{ v_color }}44;">{{ v_icon }}</div>
+                    <div class="verdict-text-block">
+                        <div class="status-tag {{ v_tag }}" style="margin-bottom: 8px;">{{ v_label }}</div>
+                        <h1 style="color: var(--text); margin: 0; font-size: 32px; line-height: 1.1;">{{ v_text }}</h1>
+                        <div class="verdict-subtitle">{{ v_sub }}</div>
+                    </div>
+                </div>
+                <div class="verdict-metrics">
+                    <div class="verdict-metric-item">
+                        <span class="card-label">Confidence Score</span>
+                        <span style="font-size: 1.8rem; font-weight: 800; color: var(--text); letter-spacing: -1px;">{{ conf }}%</span>
+                    </div>
+                    <div class="verdict-metric-item">
+                        <span class="card-label">Severity Index</span>
+                        <div class="severity-container">
+                            <div class="severity-blocks">
+                                {% set sq_filled = (risk / 10)|round(0, 'ceil')|int %}
+                                {% for i in range(10) %}
+                                    <div class="severity-block" style="background: {{ v_color if i < sq_filled else 'rgba(255,255,255,0.05)' }}; box-shadow: {{ '0 0 10px ' ~ v_color if i < sq_filled else 'none' }};"></div>
+                                {% endfor %}
+                            </div>
+                            <span style="font-size: 0.7rem; color: var(--mg); font-weight: 700; text-align: left; margin-top: 2px;">LVL {{ sq_filled }}/10</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. ACTION BAR -->
+            <div class="action-bar fade-in" style="justify-content: center;">
+                <a href="/scanner" class="btn btn-primary" style="padding: 12px 28px;">
+                    <i class="icon">🔍</i> Scan Another URL
+                </a>
+                <a href="/download-report" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border);">
+                    <i class="icon">📄</i> Download Report
+                </a>
+                {% if result.risk_score > 30 %}
+                <button onclick="submitReport('{{ result.url }}', {{ result.risk_score }})" id="reportBtn" class="btn btn-danger">
+                    <i class="icon">🚩</i> Report URL
+                </button>
+                {% endif %}
+                <a href="{{ result.url }}" target="_blank" class="btn" style="background: var(--surface); color: var(--mg); border: 1px solid var(--border);" 
+                   {% if result.risk_score > 30 %}onclick="return confirm('⚠ SECURITY WARNING: This URL is flagged. Proceed?')" style="color: var(--danger); border-color: var(--danger);"{% endif %}>
+                    <i class="icon">↗</i> Open URL
+                </a>
+            </div>
+
+            <div id="reportResult" style="display:none; text-align:center; margin-bottom:24px; padding:12px; border-radius:8px;"></div>
+
+            <!-- 3. DETAILS GRID -->
+            <div class="details-grid">
+                
+                <!-- A. Risk Indicators -->
+                <div class="card card-malicious fade-in">
+                    <div class="card-header">
+                        <span class="card-title" style="color: var(--danger);">🚨 Risk Indicators</span>
+                        <span class="status-tag status-tag-danger">Flags: {{ reasons|length + (result.layers|selectattr('triggered')|list|length) }}</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: 0; list-style: none;">
+                        {% for r in reasons %}
+                        <li style="font-size: 0.85rem; color: var(--text); margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding: 10px; background: rgba(220, 38, 38, 0.05); border-radius: 8px;">
+                            <span style="color: var(--danger);">✖</span> 
+                            <span>{{ r }}</span>
+                        </li>
+                        {% endfor %}
+                        {% if result.layers %}
+                            {% for layer in result.layers %}
+                                {% if layer.triggered %}
+                                <li style="font-size: 0.85rem; color: var(--text); margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding: 10px; background: rgba(220, 38, 38, 0.05); border-radius: 8px;">
+                                    <span style="color: var(--danger);">✖</span> 
+                                    <span><strong>{{ layer.name }}:</strong> {{ layer.detail }}</span>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                        {% if not reasons and (not result.layers or result.layers|selectattr('triggered')|list|length == 0) %}
+                             <li style="font-size: 0.85rem; color: var(--mg); font-style: italic;">No high-risk indicators detected.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- B. Safe Signals -->
+                <div class="card card-safe fade-in">
+                    <div class="card-header">
+                        <span class="card-title" style="color: var(--success);">🛡️ Safe Signals</span>
+                    </div>
+                    <ul style="margin: 0; padding-left: 0; list-style: none;">
+                        {% set has_safe = false %}
+                        {% if not result.is_malicious %}
+                            <li style="font-size: 0.85rem; color: var(--text); margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;">
+                                <span style="color: var(--success);">✔</span> <span>Architectural patterns appear legitimate</span>
+                            </li>
+                            {% set has_safe = true %}
+                        {% endif %}
+                        {% if result.ssl_valid %}
+                            <li style="font-size: 0.85rem; color: var(--text); margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;">
+                                <span style="color: var(--success);">✔</span> <span>Verified SSL encryption active</span>
+                            </li>
+                            {% set has_safe = true %}
+                        {% endif %}
+                        {% if result.dns_valid %}
+                            <li style="font-size: 0.85rem; color: var(--text); margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;">
+                                <span style="color: var(--success);">✔</span> <span>Global DNS resolution confirmed</span>
+                            </li>
+                            {% set has_safe = true %}
+                        {% endif %}
+                        {% if not has_safe %}
+                            <li style="font-size: 0.85rem; color: var(--mg); font-style: italic;">No compensatory safe signals found.</li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- C. Intelligence Signals -->
+                <div class="card fade-in" style="border-left: 4px solid var(--secondary);">
+                    <div class="card-header">
+                        <span class="card-title">🔎 Domain Intelligence</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                        <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <span class="card-label" style="display: block; margin-bottom: 4px;">Host Identifier</span>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--primary);">{{ result.domain_info.domain_name if result.domain_info else 'N/A' }}</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: {{ '1fr 1fr' if result.domain_age and result.domain_age != 'Unavailable' else '1fr' }}; gap: 12px;">
+                            {% if result.domain_age and result.domain_age != 'Unavailable' %}
+                            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                <span class="card-label">Domain Age</span>
+                                <div style="font-weight: 700; margin-top: 4px;">{{ result.domain_age }}</div>
+                            </div>
+                            {% endif %}
+                            <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                                <span class="card-label">SSL Rank</span>
+                                <div style="margin-top: 4px;">{{ 'SECURE' if result.ssl_valid else 'UNVERIFIED' }}</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- D. Scan Summary -->
+                <div class="card fade-in" style="border-left: 4px solid var(--border-bright);">
+                    <div class="card-header">
+                        <span class="card-title">📊 Session Metadata</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div>
+                            <span class="card-label">Time Elapsed</span>
+                            <div class="card-value">{{ result.time_taken|default('0.45') }}s</div>
+                        </div>
+                        <div>
+                            <span class="card-label">Analysis Model</span>
+                            <div class="card-value" style="font-size: 1rem; color: var(--primary);">{{ result.model }}</div>
+                        </div>
+                        <div style="grid-column: span 2; margin-top: 10px;">
+                            <span class="card-label">Unique Scan Reference</span>
+                            <div style="font-size: 0.75rem; color: var(--mg); font-family: 'JetBrains Mono', monospace;">{{ result.scan_id|default('PH-8829XX') }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- E. Multi-Model Analysis -->
+                <div class="card fade-in" style="border-left: 4px solid var(--primary); grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <span class="card-title">🤖 Neural Consensus Analysis</span>
+                        <span class="status-tag status-tag-scanning">AGREEMENT: {{ result.agreement }}</span>
+                    </div>
+                    {% if result.model_results %}
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        {% for m in result.model_results %}
+                        <div style="padding: 14px; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--mg); font-weight: 700;">{{ m.name }}</div>
+                                <div style="font-weight: 800; font-size: 1rem; color: {{ 'var(--warning)' if m.status == 'SUSPICIOUS' else ('var(--danger)' if m.is_malicious else 'var(--success)') }};">
+                                    {% if m.status %}
+                                        {{ '⚠ ' if m.status == 'SUSPICIOUS' else ('✖ ' if m.is_malicious else '✔ ') }}{{ m.status }}
+                                    {% else %}
+                                        {{ '✖ MALICIOUS' if m.is_malicious else '✔ SAFE' }}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div style="text-align: right;">
+                                <div style="font-size: 0.7rem; color: var(--mg);">Confidence</div>
+                                <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">{{ m.confidence|round }}%</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div style="margin-top: 20px; padding: 12px; background: rgba(0,217,255,0.05); border-radius: 8px; text-align: center; border: 1px solid rgba(0,217,255,0.1);">
+                        <span style="font-weight: 700; color: var(--text);">Final Cross-Model Consensus: </span>
+                        <span class="status-tag {{ 'status-tag-danger' if result.final_malicious else 'status-tag-safe' }}" style="margin-left: 10px;">
+                            {{ 'THREAT CONFIRMED' if result.final_malicious else 'CLEAN SIGNAL' }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+
         </div>
-      </div>
-    </div>
-    <footer class="footer">
-      PhishNet &mdash; ML-Based Malicious URL Detection &mdash; CS3811 Project
-      Work &mdash; IV Year B.E. CSE &mdash; Study World College of Engineering,
-      Coimbatore
-    </footer>
-  </body>
-</html>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // ── Real-time URL feedback ────────────────────────────
+    const urlInput    = document.getElementById('urlInput');
+    const urlFeedback = document.getElementById('urlFeedback');
+
+    if (urlInput && urlFeedback) {
+        urlInput.addEventListener('input', (e) => {
+            const v = e.target.value.toLowerCase();
+            if (v.includes('login') || v.includes('verify') ||
+                v.includes('free')  || v.includes('secure') ||
+                v.includes('account') || v.includes('update')) {
+                urlFeedback.innerHTML   = '⚠ Suspicious keyword detected';
+                urlFeedback.style.color = 'var(--medium)';
+            } else if (/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/.test(v)) {
+                urlFeedback.innerHTML   = '⚠ IP-based URL detected';
+                urlFeedback.style.color = 'var(--medium)';
+            } else if (v.length > 0) {
+                urlFeedback.innerHTML   = '✓ URL format looks normal';
+                urlFeedback.style.color = '#10b981';
+            } else {
+                urlFeedback.innerHTML = '';
+            }
+        });
+    }
+
+    // ── Simulated cybersecurity reporting ─────────────────
+    function submitReport(url, risk) {
+        const confirmed = confirm(
+            '⚠ Are you sure you want to report this URL?\n\n' +
+            url + '\n\n' +
+            'This is a simulated report for educational purposes.'
+        );
+        if (!confirmed) return;
+
+        const btn = document.getElementById('reportBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Reporting…'; }
+
+        fetch('/report-url', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ url: url, risk: risk })
+        })
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById('reportResult');
+            if (data.success) {
+                box.style.display = 'block';
+                box.innerHTML =
+                    '<strong style="color:#10b981;">✔ ' + data.message + '</strong><br>' +
+                    '<span style="font-size:0.8rem;color:var(--mg);">Report ID: ' +
+                    '<code style="color:#f59e0b;font-size:0.9rem;">' + data.report_id + '</code>' +
+                    ' &nbsp;|&nbsp; Timestamp: ' + data.report.timestamp + '</span><br>' +
+                    '<a href="/reports" style="font-size:0.8rem;color:var(--primary);">View all reports →</a>';
+                if (btn) { btn.textContent = '✔ Reported'; btn.style.background = '#10b981'; }
+            } else {
+                box.style.display   = 'block';
+                box.style.background = 'rgba(239,68,68,0.1)';
+                box.style.border     = '1px solid #ef4444';
+                box.innerHTML        = '<span style="color:#ef4444;">⚠ ' + (data.error || 'Report failed') + '</span>';
+                if (btn) { btn.disabled = false; btn.textContent = '🚩 Report this URL'; }
+            }
+        })
+        .catch(() => {
+            const box = document.getElementById('reportResult');
+            box.style.display = 'block';
+            box.innerHTML = '<span style="color:#ef4444;">⚠ Network error. Could not submit report.</span>';
+            if (btn) { btn.disabled = false; btn.textContent = '🚩 Report this URL'; }
+        });
+    }
+</script>
+{% endblock %}

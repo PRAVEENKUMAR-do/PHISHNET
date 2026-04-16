@@ -1,64 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PhishNet — Malicious URL Detection</title><link rel="stylesheet" href="/static/css/style.css"></head>
-<body>
-<nav class="navbar">
-  <a href="/" class="nav-brand">
-    <span>🛡</span>
-    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="/">Home</a></li>
-    <li><a href="/faq">FAQ</a></li>
-    <li><a href="/login" class="btn-nav-login">Login</a></li>
-  </ul>
-</nav>
-<main class="page">
-  <section class="hero">
-    <div class="hero-badge">&#128274; AI-Powered Cyber Security</div>
-    <h1>Malicious &amp; Phishing URL Detection<br>Using Machine Learning</h1>
-    <p>PhishNet analyses any website link in real time using a trained Random Forest model —
-       achieving <strong>96.74% accuracy</strong> — protecting you from phishing,
-       malware, and suspicious websites.</p>
-    <div class="hero-btns">
-      <a href="/login" class="btn btn-primary">Get Started &rarr;</a>
-      <a href="/faq"   class="btn btn-outline">Learn More</a>
-    </div>
-  </section>
+{% extends "base.html" %}
 
-  <div class="stats-bar">
-    <div class="stat-item"><span class="stat-num">96.74%</span><span class="stat-lbl">Model Accuracy</span></div>
-    <div class="stat-item"><span class="stat-num">20</span><span class="stat-lbl">Features Analysed</span></div>
-    <div class="stat-item"><span class="stat-num">52K+</span><span class="stat-lbl">URLs Trained On</span></div>
-    <div class="stat-item"><span class="stat-num">&lt;1s</span><span class="stat-lbl">Detection Speed</span></div>
-    <div class="stat-item"><span class="stat-num">4</span><span class="stat-lbl">ML Models Compared</span></div>
-  </div>
+{% block title %}PhishNet{% endblock %}
 
-  <div class="info-cards">
-    <div class="info-card">
-      <div class="info-card-icon ic-blue">&#129302;</div>
-      <h3>AI Powered Detection</h3>
-      <p>Trained Random Forest classifier on 52,000+ real URLs. Detects phishing,
-         malware, and spam that blacklists cannot catch.</p>
+{% block content %}
+<div class="hero-section fade-in" style="text-align: center; padding: 4rem 0;">
+    <div class="hero-badge" style="display:inline-block; padding: 6px 16px; background: rgba(34, 211, 238, 0.1); border: 1px solid var(--cyan-glow); border-radius: 50px; color: var(--cyan); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2rem;">
+        Next-Generation Security Engineering
     </div>
-    <div class="info-card">
-      <div class="info-card-icon ic-orange">&#128203;</div>
-      <h3>Detailed Reports</h3>
-      <p>Every scan returns a confidence score, malicious probability, category label,
-         and full scan timestamp.</p>
+    
+    <h1 style="font-size: 4rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -2px;">
+        PhishNet — ML-Based Malicious <br><span class="text-gradient">URL Detection System</span>
+    </h1>
+    
+    <p style="font-size: 1.25rem; color: var(--mg); max-width: 700px; margin: 0 auto 3rem; line-height: 1.6;">
+        Classifies URLs as Safe, Suspicious, or Malicious. Utilizing optimized model performance and advanced threat intelligence, PhishNet provides high-accuracy detection across diverse phishing datasets.
+    </p>
+
+    <div style="display: flex; gap: 20px; justify-content: center;">
+        <a href="/scanner" class="btn btn-primary" style="padding: 16px 40px; font-size: 1.1rem; box-shadow: 0 0 30px var(--primary-glow);">
+            Launch Scanner 🔍
+        </a>
+        <a href="/dashboard" class="btn" style="background: var(--card); border: 1px solid var(--border); padding: 16px 40px; font-size: 1.1rem;">
+            View Analytics 📊
+        </a>
     </div>
-    <div class="info-card">
-      <div class="info-card-icon ic-green">&#128202;</div>
-      <h3>Performance Analysis</h3>
-      <p>Compare Accuracy, Precision, Recall, and F1 across multiple ML models with
-         charts and confusion matrices.</p>
+
+    <!-- Features Overview -->
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 6rem;">
+        <div class="premium-card">
+            <div class="layer-icon" style="background: rgba(59, 130, 246, 0.1); color: var(--primary);">🤖</div>
+            <h3 style="margin-bottom: 10px;">Ensemble ML Model</h3>
+            <p style="font-size: 0.9rem; color: var(--mg);">High-accuracy detection engine trained on diverse phishing datasets including malware, spam, and malicious domain signatures.</p>
+        </div>
+        <div class="premium-card">
+            <div class="layer-icon" style="background: rgba(34, 211, 238, 0.1); color: var(--cyan);">🌐</div>
+            <h3 style="margin-bottom: 10px;">20+ URL Features</h3>
+            <p style="font-size: 0.9rem; color: var(--mg);">Extracts and examines over 20 specific markers including length, entropy, HTTPS validity, IP checks, and keywords.</p>
+        </div>
+        <div class="premium-card">
+            <div class="layer-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--safe);">🔐</div>
+            <h3 style="margin-bottom: 10px;">Explainable AI</h3>
+            <p style="font-size: 0.9rem; color: var(--mg);">Every verdict is supported by transparent human-readable evidence and risk telemetry.</p>
+        </div>
     </div>
-  </div>
-</main>
-<footer class="footer">
-  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
-  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
-  Study World College of Engineering, Coimbatore
-</footer>
-</body></html>
+</div>
+{% endblock %}

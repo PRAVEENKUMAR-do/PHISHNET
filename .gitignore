@@ -3,6 +3,5 @@ __pycache__/
 *.pyc
 .env
 data/*.csv
-model/*.pkl
 .DS_Store
 Thumbs.db

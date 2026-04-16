@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}PhishNet – Phishing Reports{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="page-hdr">
+        <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:0.5rem;">
+            🚨 Phishing <span class="text-gradient">Reports</span>
+        </h1>
+        <p style="color:var(--mg);">
+            Simulated cybersecurity incident reports generated from high-risk URL scans.
+        </p>
+    </div>
+
+    <!-- Disclaimer Banner -->
+    <div style="margin-top:1.5rem;padding:12px 20px;border-radius:10px;
+                background:rgba(249,115,22,0.08);border:1px solid rgba(249,115,22,0.3);
+                color:#f97316;font-size:0.85rem;">
+        ⚠ <strong>Educational Notice:</strong>
+        All reports listed here are <em>simulated</em> for demonstration purposes only.
+        No data has been transmitted to any external authority.
+    </div>
+
+    <div style="margin-top:2rem;">
+        {% if reports %}
+        <div class="premium-card" style="padding:1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h3 style="font-size:1.1rem;font-weight:700;">
+                    Reported URLs
+                    <span style="font-size:0.75rem;color:var(--mg);font-weight:400;margin-left:8px;">
+                        ({{ reports|length }} total)
+                    </span>
+                </h3>
+            </div>
+
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr style="text-align:left;border-bottom:1px solid var(--border);">
+                        <th style="padding:12px;color:var(--mg);font-size:0.7rem;text-transform:uppercase;">Report ID</th>
+                        <th style="padding:12px;color:var(--mg);font-size:0.7rem;text-transform:uppercase;">URL</th>
+                        <th style="padding:12px;color:var(--mg);font-size:0.7rem;text-transform:uppercase;">Risk Score</th>
+                        <th style="padding:12px;color:var(--mg);font-size:0.7rem;text-transform:uppercase;">Timestamp</th>
+                        <th style="padding:12px;color:var(--mg);font-size:0.7rem;text-transform:uppercase;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reports | reverse %}
+                    <tr style="border-bottom:1px solid rgba(255,255,255,0.03);">
+                        <td style="padding:14px 12px;">
+                            <code style="color:#f59e0b;font-size:0.9rem;font-weight:700;">
+                                {{ r.report_id }}
+                            </code>
+                        </td>
+                        <td style="padding:14px 12px;font-family:monospace;font-size:0.82rem;
+                                   max-width:280px;overflow:hidden;text-overflow:ellipsis;
+                                   white-space:nowrap;color:#fff;">
+                            {{ r.url }}
+                        </td>
+                        <td style="padding:14px 12px;font-weight:700;">
+                            <span style="color:{{ '#ef4444' if r.risk|int > 70 else '#f97316' }};">
+                                {{ r.risk }}%
+                            </span>
+                        </td>
+                        <td style="padding:14px 12px;font-size:0.8rem;color:var(--mg);">
+                            {{ r.timestamp }}
+                        </td>
+                        <td style="padding:14px 12px;">
+                            <span class="badge"
+                                  style="background:rgba(16,185,129,0.12);color:#10b981;
+                                         border:1px solid rgba(16,185,129,0.3);padding:3px 10px;">
+                                {{ r.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- External reporting links -->
+        <div class="premium-card" style="margin-top:1.5rem;padding:1.5rem;">
+            <h4 style="font-size:0.95rem;margin-bottom:1rem;">
+                🌐 Report to Real Cybersecurity Authorities
+            </h4>
+            <p style="font-size:0.82rem;color:var(--mg);margin-bottom:1rem;">
+                For production use, phishing URLs should be reported to official bodies:
+            </p>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <a href="https://www.cert-in.org.in/s2cMainServlet?pageid=PUBVLNOTES02"
+                   target="_blank"
+                   style="padding:10px 20px;border-radius:8px;font-size:0.85rem;
+                          color:#fff;background:rgba(99,102,241,0.5);
+                          text-decoration:none;font-weight:600;">
+                    🔗 CERT-In India
+                </a>
+                <a href="https://safebrowsing.google.com/safebrowsing/report_phish/"
+                   target="_blank"
+                   style="padding:10px 20px;border-radius:8px;font-size:0.85rem;
+                          color:#fff;background:rgba(59,130,246,0.5);
+                          text-decoration:none;font-weight:600;">
+                    🔗 Google Safe Browsing
+                </a>
+                <a href="https://www.phishtank.com/add_web_phish.php"
+                   target="_blank"
+                   style="padding:10px 20px;border-radius:8px;font-size:0.85rem;
+                          color:#fff;background:rgba(239,68,68,0.4);
+                          text-decoration:none;font-weight:600;">
+                    🔗 PhishTank
+                </a>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="premium-card" style="text-align:center;padding:3rem;">
+            <div style="font-size:3rem;margin-bottom:1rem;">📭</div>
+            <h3 style="color:var(--mg);font-weight:400;margin-bottom:0.5rem;">No reports yet</h3>
+            <p style="font-size:0.85rem;color:var(--mg);margin-bottom:1.5rem;">
+                Scan a phishing URL (risk &gt; 70) and click
+                <strong style="color:#f97316;">Report this URL</strong> to generate a report.
+            </p>
+            <a href="/scanner" class="btn btn-primary">Go to URL Scanner</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

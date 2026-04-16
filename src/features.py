@@ -53,6 +53,30 @@ SUSPICIOUS_TLDS = {
     "bid","webcam","accountant","science","download","stream"
 }
 
+def has_at_symbol(url: str) -> int:
+    return 1 if '@' in url else 0
+
+def long_url(url: str) -> int:
+    return 1 if len(url) > 75 else 0
+
+def count_subdomains(url: str) -> int:
+    parsed = urlparse(url if url.startswith(('http://', 'https://')) else 'https://' + url)
+    host = parsed.netloc.lower().split(":")[0]
+    return host.count('.')
+
+def uses_ip_address(url: str) -> int:
+    parsed = urlparse(url if url.startswith(('http://', 'https://')) else 'https://' + url)
+    host = parsed.netloc.lower().split(":")[0]
+    ip_pat = r"^(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)$"
+    return 1 if re.match(ip_pat, host) else 0
+
+def suspicious_keywords(url: str) -> int:
+    url_lower = url.lower()
+    return 1 if any(k in url_lower for k in BAD_KEYWORDS) else 0
+
+def https_feature(url: str) -> int:
+    return 1 if url.startswith("https") else 0
+
 def _entropy(s):
     if not s:
         return 0.0

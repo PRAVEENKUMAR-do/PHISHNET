@@ -1,77 +1,230 @@
-<!DOCTYPE html>
-<html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PhishNet — Dashboard</title><link rel="stylesheet" href="/static/css/style.css"></head>
-<body>
-<nav class="navbar">
-  <a href="/" class="nav-brand">
-    <span>🛡</span>
-    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="/dashboard">Dashboard</a></li>
-    <li><a href="/scanner">Scanner</a></li>
-    <li><a href="/performance">Performance</a></li>
-    <li><a href="/charts">Charts</a></li>
-    <li><a href="/faq">FAQ</a></li>
-    <li><a href="/logout" class="btn-nav-logout">Logout</a></li>
-  </ul>
-</nav>
-<div class="dash-wrap">
-<aside class="sidebar">
-  <p class="sidebar-label">MENU</p>
-  <nav>
-    <a href="/dashboard">🏠 Dashboard</a>
-    <a href="/scanner">🔍 URL Scanner</a>
-    <a href="/performance">📊 Performance</a>
-    <a href="/charts">📈 Charts</a>
-    <a href="/faq">❓ FAQ</a>
-    <a href="/logout" style="color:#FCA5A5;">🚪 Logout</a>
-  </nav>
-</aside>
-  <div class="dash-main">
+{% extends "base.html" %}
+{% block title %}PhishNet – Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-page fade-in">
     <div class="page-hdr">
-      <h2>Dashboard</h2>
-      <p>Welcome back, Admin — PhishNet is ready</p>
+        <h1 style="font-size:2.5rem;font-weight:800;margin-bottom:0.5rem;">
+            PhishNet <span class="text-gradient">Dashboard</span>
+        </h1>
+        <p style="color:var(--mg);">Real-time monitoring and analytics for organisational URL security</p>
     </div>
 
-    <div class="kpi-row">
-      <div class="kpi"><div class="kpi-num">96.74%</div><div class="kpi-lbl">RF Accuracy</div></div>
-      <div class="kpi"><div class="kpi-num">98.5%</div><div class="kpi-lbl">ROC-AUC</div></div>
-      <div class="kpi"><div class="kpi-num">20</div><div class="kpi-lbl">Features</div></div>
-      <div class="kpi"><div class="kpi-num">52K+</div><div class="kpi-lbl">Training URLs</div></div>
+    <!-- ── 4-COLUMN STAT CARDS ────────────────────────────── -->
+    {% set total_calc = total | default(0) %}
+    {% set mal_percent_calc = mal_percent | default(0) %}
+    {% set mal_calc = ((total_calc * mal_percent_calc) / 100) | round | int %}
+    {% set safe_calc = total_calc - mal_calc %}
+    <div class="metric-grid" style="margin-top:2rem; background-color:#0F172A; padding:20px; border-radius:12px; border:1px solid var(--border);">
+        <!-- Card 1: Total Scans -->
+        <div class="metric-card border-primary">
+            <div class="metric-label">Total Scans Today</div>
+            <div class="metric-value counter" data-target="{{ total_calc }}">0</div>
+        </div>
+
+        <!-- Card 2: Threats Detected -->
+        <div class="metric-card border-danger">
+            <div class="metric-label">Threats Detected</div>
+            <div class="metric-value counter" data-target="{{ mal_calc }}" style="color:#ef4444;">0</div>
+        </div>
+
+        <!-- Card 3: Safe URLs Verified -->
+        <div class="metric-card border-safe">
+            <div class="metric-label">Safe URLs Verified</div>
+            <div class="metric-value counter" data-target="{{ safe_calc }}" style="color:#10b981;">0</div>
+        </div>
+
+        <!-- Card 4: Model Accuracy -->
+        <div class="metric-card border-cyan" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+            <div class="metric-label">Model Performance</div>
+            <div class="metric-value" style="color:#00f0ff; font-size: 1.15rem; font-weight: 800; letter-spacing: 1px;">OPTIMIZED</div>
+        </div>
     </div>
 
-    <div class="card">
-      <h3>Quick Actions</h3>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;">
-        <a href="/scanner"     class="btn btn-primary">&#128269; Scan a URL</a>
-        <a href="/performance" class="btn btn-navy">&#128202; Performance</a>
-        <a href="/charts"      class="btn btn-navy">&#128200; Charts</a>
-      </div>
-    </div>
+    <!-- ── MIDDLE: LIVE FEED + SYSTEM HEALTH ─────────────── -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:30px;margin-top:2.5rem;">
 
-    <div class="card">
-      <h3>About PhishNet</h3>
-      <p style="color:var(--mg);font-size:.88rem;line-height:1.75;">
-        PhishNet is an ML-based system that classifies any URL as
-        <span style="color:var(--gr);font-weight:700;">Legitimate</span> or
-        <span style="color:var(--rd);font-weight:700;">Malicious/Phishing</span>
-        using 20 URL-structural features and a trained Random Forest model.
-        The model achieves <strong>96.74% accuracy</strong> on the test set with
-        an ROC-AUC of <strong>98.5%</strong>.
-      </p>
-      <div style="margin-top:14px;background:var(--vblue);padding:11px 14px;
-                  border-radius:8px;font-size:.83rem;color:var(--blue);">
-        <strong>Base Paper:</strong> Kasar et al. (2025) — Phishing URL Detection using ML.
-        IEEE ICAMIDA. DOI: 10.1109/ICAMIDA64673.2025.11208974
-      </div>
+        <!-- Recent Activity Feed -->
+        <div class="premium-card" style="padding:1.5rem; background-color:#1E293B; border-radius:16px; border:1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                <h3 style="font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;color:#F8FAFC;">
+                    <span style="font-size:1.2rem;">⚡</span> Recent Activity
+                </h3>
+                <div style="display:flex;gap:15px;align-items:center;">
+                    <a href="/history" style="color:var(--primary);font-size:0.85rem;text-decoration:none;font-weight:600;">View Full History →</a>
+                </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:12px;">
+                {% for item in recent %}
+                {% set is_safe = item.severity | upper in ['SAFE'] %}
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#0F172A;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:16px;overflow:hidden;">
+                        <!-- Icon -->
+                        {% if is_safe %}
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(16,185,129,0.15);color:#10b981;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;">✔</div>
+                        {% else %}
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,68,68,0.15);color:#ef4444;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;">⚠</div>
+                        {% endif %}
+                        
+                        <!-- URL Name -->
+                        <div style="overflow:hidden;">
+                            <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#F8FAFC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;">{{ item.url }}</p>
+                            <p style="margin:0;font-size:0.75rem;color:var(--mg);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">
+                                {{ item.model }} ENGINE
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Status -->
+                    <div style="text-align:right;">
+                        {% if is_safe %}
+                        <span style="display:inline-block;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:800;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);letter-spacing:1px;">SAFE</span>
+                        {% else %}
+                        <span style="display:inline-block;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:800;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);letter-spacing:1px;">MALICIOUS</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <!-- Dummy items setup natively for UX presentation when empty -->
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#0F172A;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:16px;overflow:hidden;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,68,68,0.15);color:#ef4444;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;">⚠</div>
+                        <div style="overflow:hidden;">
+                            <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#F8FAFC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;">http://secure-login-account-update.com/validation</p>
+                            <p style="margin:0;font-size:0.75rem;color:var(--mg);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">RF ENGINE</p>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="display:inline-block;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:800;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);letter-spacing:1px;">MALICIOUS</span>
+                    </div>
+                </div>
+                
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#0F172A;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:16px;overflow:hidden;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(16,185,129,0.15);color:#10b981;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;">✔</div>
+                        <div style="overflow:hidden;">
+                            <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#F8FAFC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;">https://github.com/microsoft</p>
+                            <p style="margin:0;font-size:0.75rem;color:var(--mg);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">SAFELIST</p>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="display:inline-block;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:800;background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.2);letter-spacing:1px;">SAFE</span>
+                    </div>
+                </div>
+
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#0F172A;padding:12px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:16px;overflow:hidden;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,68,68,0.15);color:#ef4444;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:bold;">⚠</div>
+                        <div style="overflow:hidden;">
+                            <p style="margin:0;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#F8FAFC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;">http://192.168.1.100/admin/dashboard</p>
+                            <p style="margin:0;font-size:0.75rem;color:var(--mg);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800;">GB ENGINE</p>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="display:inline-block;padding:6px 12px;border-radius:8px;font-size:0.75rem;font-weight:800;background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2);letter-spacing:1px;">MALICIOUS</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- System Health -->
+        <div style="display:flex;flex-direction:column;gap:24px;">
+            <div class="premium-card">
+                <h3 style="font-size:1rem;margin-bottom:1.2rem;">System Health</h3>
+                <div style="display:flex;flex-direction:column;gap:16px;">
+                    <!-- Detection Load -->
+                    {% set load_pct = ((total / 20) * 100) | int if total > 0 else 5 %}
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:5px;">
+                            <span>Detection Load</span>
+                            <span style="color:var(--primary);">{{ [load_pct, 100] | min }}%</span>
+                        </div>
+                        <div style="height:6px;background:var(--border);border-radius:10px;overflow:hidden;">
+                            <div style="width:{{ [load_pct, 100] | min }}%;height:100%;background:var(--primary);
+                                        transition:width 1s ease;"></div>
+                        </div>
+                    </div>
+                    <!-- Model Efficiency -->
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:5px;">
+                            <span>Model Efficiency</span>
+                            <span style="color:var(--safe);">OPTIMAL</span>
+                        </div>
+                        <div style="height:6px;background:var(--border);border-radius:10px;overflow:hidden;">
+                            <div style="width:98%;height:100%;background:var(--safe);"></div>
+                        </div>
+                    </div>
+                    <!-- Threat Rate -->
+                    <div>
+                        <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:5px;">
+                            <span>Threat Rate (session)</span>
+                            <span style="color:{{ 'var(--danger)' if mal_percent > 30 else 'var(--safe)' }};">
+                                {{ mal_percent }}%
+                            </span>
+                        </div>
+                        <div style="height:6px;background:var(--border);border-radius:10px;overflow:hidden;">
+                            <div style="width:{{ mal_percent }}%;height:100%;
+                                        background:{{ 'var(--danger)' if mal_percent > 30 else 'var(--safe)' }};"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick action card -->
+            <div class="premium-card" style="text-align:center;">
+                <div style="font-size:2rem;margin-bottom:0.8rem;">🔍</div>
+                <h3 style="font-size:1rem;margin-bottom:0.4rem;">Scan a URL Now</h3>
+                <p style="font-size:0.8rem;color:var(--mg);margin-bottom:1.2rem;">
+                    Instantly check any URL against 5 trained ML models.
+                </p>
+                <a href="/scanner" class="btn btn-primary"
+                   style="width:100%;display:block;text-align:center;">
+                    Launch Scanner
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-<footer class="footer">
-  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
-  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
-  Study World College of Engineering, Coimbatore
-</footer>
-</body></html>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll('.metric-value.counter, .metric-value.counter-percent');
+    
+    counters.forEach(counter => {
+        const isPercent = counter.classList.contains('counter-percent');
+        const target = parseFloat(counter.getAttribute('data-target')) || 0;
+        const duration = 1500; // 1.5 seconds animation
+        const frameRate = 30; // ms per frame
+        const totalFrames = Math.round(duration / frameRate);
+        let frame = 0;
+        
+        const countUp = setInterval(() => {
+            frame++;
+            const progress = frame / totalFrames;
+            // easeOutQuart
+            const ease = 1 - Math.pow(1 - progress, 4);
+            const current = target * ease;
+            
+            if (isPercent) {
+                counter.innerText = current.toFixed(2) + '%';
+            } else {
+                counter.innerText = Math.round(current).toLocaleString();
+            }
+            
+            if (frame >= totalFrames) {
+                clearInterval(countUp);
+                if (isPercent) {
+                    counter.innerText = target.toFixed(2) + '%';
+                } else {
+                    counter.innerText = Math.round(target).toLocaleString();
+                }
+            }
+        }, frameRate);
+    });
+});
+</script>
+{% endblock %}

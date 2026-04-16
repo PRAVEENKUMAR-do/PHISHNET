@@ -1,44 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>PhishNet — Login</title><link rel="stylesheet" href="/static/css/style.css"></head>
-<body>
-<nav class="navbar">
-  <a href="/" class="nav-brand">
-    <span>🛡</span>
-    <div><strong>PhishNet</strong><small>Malicious URL Detection</small></div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="/">Home</a></li>
-    <li><a href="/faq">FAQ</a></li>
-    <li><a href="/login" class="btn-nav-login">Login</a></li>
-  </ul>
-</nav>
-<div class="login-wrap">
-  <div class="login-box">
-    <span class="login-logo">&#128737;</span>
-    <h2>Welcome Back</h2>
-    <p class="login-sub">Sign in to the PhishNet dashboard</p>
-    <div class="login-hint">Default login&nbsp;&nbsp;<strong>admin</strong> / <strong>admin</strong></div>
-    {% if error %}
-    <div class="err-alert">{{ error }}</div>
-    {% endif %}
-    <form method="POST">
-      <div class="form-grp">
-        <label>Username</label>
-        <input name="username" class="form-ctrl" placeholder="admin" required autofocus>
-      </div>
-      <div class="form-grp">
-        <label>Password</label>
-        <input name="password" type="password" class="form-ctrl" placeholder="admin" required>
-      </div>
-      <button class="btn btn-primary btn-block">Login to Dashboard &rarr;</button>
-    </form>
-  </div>
-</div>
-<footer class="footer">
-  PhishNet &mdash; ML-Based Malicious URL Detection &mdash;
-  CS3811 Project Work &mdash; IV Year B.E. CSE &mdash;
-  Study World College of Engineering, Coimbatore
-</footer>
-</body></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>PhishNet — Enterprise Cyber Intelligence Login</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body style="display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);">
+    <div class="premium-card fade-in" style="width: 100%; max-width: 450px; padding: 3rem;">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--cyan)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem; box-shadow: 0 0 30px var(--primary-glow);">🛡️</div>
+            <h1 style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;">Security Portal</h1>
+            <p style="color: var(--mg); font-size: 0.9rem;">Authorized Personnel Only — PhishNet v2.0</p>
+        </div>
+
+        {% if error %}
+        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: var(--danger); padding: 12px; border-radius: 12px; margin-bottom: 1.5rem; font-size: 0.85rem; text-align: center;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Access Key / Username</label>
+                <input name="username" placeholder="Enter username..." required autofocus>
+            </div>
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <label style="margin-bottom: 0;">Encryption Key / Password</label>
+                </div>
+                <input name="password" type="password" placeholder="••••••••" required>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">Authenticate Identity →</button>
+        </form>
+
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center;">
+            <p style="font-size: 0.75rem; color: var(--mg);">Default Credentials: <strong style="color: #fff;">admin / admin</strong></p>
+        </div>
+    </div>
+</body>
+</html>
